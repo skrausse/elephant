@@ -397,10 +397,12 @@ class Synchrotool(Complexity):
         ``self.epoch.array_annotations`` *in-place*.
         """
         epoch_complexities = self.epoch.array_annotations['complexity']
+        bin_shift = .5 / self.sampling_rate
         right_edges = (
             self.epoch.times.magnitude.flatten()
             + self.epoch.durations.rescale(
                 self.epoch.times.units).magnitude.flatten()
+            + bin_shift.rescale(self.epoch.times.units).magnitude
         )
 
         for idx, st in enumerate(self.input_spiketrains):
@@ -411,6 +413,7 @@ class Synchrotool(Complexity):
             spike_to_epoch_idx = np.searchsorted(
                 right_edges,
                 st.times.rescale(self.epoch.times.units).magnitude.flatten())
+            breakpoint()
             complexity_per_spike = epoch_complexities[spike_to_epoch_idx]
 
             st.array_annotate(complexity=complexity_per_spike)
